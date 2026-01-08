@@ -49,9 +49,9 @@
     const lnameInput = document.getElementById('lname');
     const phoneInput = document.getElementById('phone_number');
     const birthInput = document.getElementById('birth_day');
-    let selectedFiles = [];
-    let resultImages = [];
+    let selectedItems = [];
     let detectionInProgress = false;
+    let nextItemId = 0;
 
     // Drag and Drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -100,16 +100,18 @@
             return;
         }
 
-        const startIndex = selectedFiles.length;
-        selectedFiles = selectedFiles.concat(fileArray);
-        resultImages = resultImages.concat(new Array(fileArray.length).fill(null));
+        const newItems = [];
         previewContainer.style.display = 'grid';
 
         fileArray.forEach((file, index) => {
-            const globalIndex = startIndex + index;
+            const itemId = nextItemId++;
+            const item = { id: itemId, file, resultImage: null };
+            newItems.push(item);
+            selectedItems.push(item);
+
             const card = document.createElement('div');
             card.className = 'image-card';
-            card.dataset.index = globalIndex.toString();
+            card.dataset.itemId = itemId.toString();
 
             const originalTitle = document.createElement('h3');
             originalTitle.textContent = `Original Image (${file.name})`;
@@ -132,10 +134,27 @@
             resultWrapper.appendChild(loader);
             resultWrapper.appendChild(resultImg);
 
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '0.75rem';
+            actions.style.flexWrap = 'wrap';
+            actions.style.marginTop = '0.5rem';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', function() {
+                removeItem(itemId);
+            });
+
+            actions.appendChild(removeBtn);
+
             card.appendChild(originalTitle);
             card.appendChild(originalWrapper);
             card.appendChild(resultTitle);
             card.appendChild(resultWrapper);
+            card.appendChild(actions);
             previewContainer.appendChild(card);
 
             const reader = new FileReader();
@@ -145,11 +164,11 @@
             reader.readAsDataURL(file);
         });
 
-        runDetection(fileArray, startIndex);
+        runDetection(newItems);
     }
 
     submitBtn.addEventListener('click', function() {
-        if (selectedFiles.length === 0) {
+        if (selectedItems.length === 0) {
             showToast("Please upload images first.");
             return;
         }
@@ -161,17 +180,17 @@
             showToast("Detection is still running.");
             return;
         }
-        if (resultImages.some(image => !image)) {
+        if (selectedItems.some(item => !item.resultImage)) {
             showToast("Please wait for detection to finish.");
             return;
         }
 
-        submitCase(selectedFiles, resultImages);
+        submitCase(selectedItems);
     });
 
-    function runDetection(files, offset) {
+    function runDetection(items) {
         const formData = new FormData();
-        files.forEach(file => formData.append('images', file));
+        items.forEach(item => formData.append('images', item.file));
 
         previewContainer.querySelectorAll('.loader').forEach(loader => {
             loader.style.display = 'block';
@@ -190,8 +209,9 @@
         .then(data => {
             if (!data.results) throw new Error('Invalid response');
             data.results.forEach((result) => {
-                const globalIndex = offset + result.index;
-                const card = previewContainer.querySelector(`[data-index="${globalIndex}"]`);
+                const item = items[result.index];
+                if (!item) return;
+                const card = previewContainer.querySelector(`[data-item-id="${item.id}"]`);
                 if (!card) return;
                 const resultImg = card.querySelector('img[alt="Result"]');
                 const loader = card.querySelector('.loader');
@@ -200,7 +220,7 @@
                     resultImg.style.display = 'block';
                 }
                 if (loader) loader.style.display = 'none';
-                resultImages[globalIndex] = result.result_image;
+                item.resultImage = result.result_image;
             });
         })
         .catch(error => {
@@ -215,10 +235,10 @@
         });
     }
 
-    function submitCase(files, results) {
+    function submitCase(items) {
         const formData = new FormData();
-        files.forEach(file => formData.append('images', file));
-        results.forEach(result => formData.append('result_images', result));
+        items.forEach(item => formData.append('images', item.file));
+        items.forEach(item => formData.append('result_images', item.resultImage));
         formData.append('fname', fnameInput.value);
         formData.append('lname', lnameInput.value);
         formData.append('phone_number', phoneInput.value);
@@ -235,7 +255,7 @@
         .then(data => {
             if (!data.images) throw new Error('Invalid response');
             data.images.forEach((result) => {
-                const card = previewContainer.querySelector(`[data-index="${result.index}"]`);
+                const card = previewContainer.querySelector(`[data-item-id="${items[result.index].id}"]`);
                 if (!card) return;
 
                 const linkWrapper = document.createElement('div');
@@ -270,8 +290,7 @@
     }
 
     function resetForm() {
-        selectedFiles = [];
-        resultImages = [];
+        selectedItems = [];
         fileInput.value = '';
         fnameInput.value = '';
         lnameInput.value = '';
@@ -279,6 +298,16 @@
         birthInput.value = '';
         previewContainer.innerHTML = '';
         previewContainer.style.display = 'none';
+    }
+
+    function removeItem(itemId) {
+        selectedItems = selectedItems.filter(item => item.id !== itemId);
+        const card = previewContainer.querySelector(`[data-item-id="${itemId}"]`);
+        if (card) card.remove();
+        if (selectedItems.length === 0) {
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'none';
+        }
     }
 
     function showToast(message) {
