@@ -19,27 +19,29 @@
             min-height: 100vh;
         }
 
-        header {
-            width: 100%;
-            padding: 1.5rem 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-            position: fixed;
-            top: 0;
-            z-index: 10;
-        }
 
-        header h1 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+header {
+    width: 100%;
+    padding: 1.5rem 2rem;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+header h1 {
+    margin-left: 1rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
         main {
             margin-top: 80px;
             width: 90%;
@@ -193,25 +195,25 @@
     }
 
     .header-nav {
-        margin-top: 0.75rem;
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
+    margin-top: 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
 
-    .header-nav a {
-        color: var(--secondary-text);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.95rem;
-    }
+.header-nav a {
+    margin-right: 1rem;
+    color: var(--secondary-text);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
 
-    .header-nav a.active,
-    .header-nav a:hover {
-        color: var(--text-color);
-    }
-
+.header-nav a.active,
+.header-nav a:hover {
+    color: var(--text-color);
+}
     .table-card {
         width: 100%;
         max-width: 1000px;

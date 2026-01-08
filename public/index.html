@@ -7,7 +7,382 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --primary-color: #3b82f6;
+            --text-color: #f8fafc;
+            --secondary-text: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5rem 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            z-index: 10;
+        }
+        
+        header > * {
+            margin: 0 4rem;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            header > * {
+                margin: 0 2rem;
+            }
+        }
+
+        header h1 {
+            margin: 0.25;
+            font-weight: 600;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-nav {
+            margin: 1;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .header-nav a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .header-nav a.active,
+        .header-nav a:hover {
+            color: var(--text-color);
+        }
+
+        main {
+            margin-top: 80px;
+            width: 90%;
+            max-width: 1400px;
+            padding: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 968px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-container {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-section {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 600px;
+        }
+        
+        .preview-section::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .preview-section::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 4px;
+        }
+        
+        .preview-section::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .preview-section::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-text);
+        }
+
+        .upload-section {
+            border: 2px dashed var(--border-color);
+            border-radius: 1rem;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .upload-section:hover {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-section.dragging {
+            border-color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.1);
+            transform: scale(1.02);
+        }
+
+        .icon-upload {
+            font-size: 3rem;
+            color: var(--secondary-text);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-color);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            color: var(--secondary-text);
+            font-size: 0.875rem;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .patient-section {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .section-title {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: #0b1220;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .text-input::placeholder {
+            color: var(--secondary-text);
+        }
+
+        .input-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        .preview-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .add-more-btn {
+            width: 100%;
+            margin-top: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd;
+            border: 1px solid var(--primary-color);
+        }
+
+        .add-more-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .image-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .image-card h4 {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .img-wrapper {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .loader {
+            width: 36px;
+            height: 36px;
+            border: 4px solid #FFF;
+            border-bottom-color: var(--primary-color);
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            position: absolute;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-remove {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+        }
+
+        .btn-remove:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .image-card a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .image-card a:hover {
+            text-decoration: underline;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        .empty-state {
+            display: block;
+        }
+
+        .has-images .empty-state {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -20,25 +395,35 @@
 </header>
 
 <main>
-    <div class="upload-section">
-        <div class="upload-text">Patient information</div>
-        <div style="display: grid; gap: 0.75rem; margin-top: 1rem;">
-            <input class="text-input" type="text" id="fname" placeholder="First name">
-            <input class="text-input" type="text" id="lname" placeholder="Last name">
-            <input class="text-input" type="text" id="phone_number" placeholder="Phone number">
-            <input class="text-input" type="date" id="birth_day">
+    <div class="content-wrapper">
+        <div class="upload-container" id="upload-container">
+            <div class="upload-section empty-state" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                <div class="icon-upload">☁️</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">JPG, PNG up to 10MB (multiple allowed)</div>
+                <input type="file" id="file-input" accept="image/jpeg, image/png" multiple>
+            </div>
+            
+            <div class="preview-section">
+                <div class="preview-grid" id="preview-container"></div>
+            </div>
+            
+            <button class="btn add-more-btn" id="add-more-btn" style="display: none;" onclick="document.getElementById('file-input').click()">
+                + Add More Images
+            </button>
         </div>
-        <button class="btn" id="submit-btn" type="button" style="margin-top: 1.5rem;">Submit</button>
-    </div>
 
-    <div class="upload-section" id="drop-zone" onclick="document.getElementById('file-input').click()">
-        <div class="icon-upload">☁️</div>
-        <div class="upload-text">Click to upload or drag and drop</div>
-        <div class="upload-subtext">JPG, PNG up to 10MB (multiple allowed)</div>
-        <input type="file" id="file-input" accept="image/jpeg, image/png" multiple>
+        <div class="patient-section">
+            <h2 class="section-title">Patient information</h2>
+            <div class="input-grid">
+                <input class="text-input" type="text" id="fname" placeholder="First name">
+                <input class="text-input" type="text" id="lname" placeholder="Last name">
+                <input class="text-input" type="text" id="phone_number" placeholder="Phone number">
+                <input class="text-input" type="date" id="birth_day">
+            </div>
+            <button class="btn" id="submit-btn" type="button">Submit</button>
+        </div>
     </div>
-
-    <div class="preview-container" id="preview-container"></div>
 </main>
 
 <div id="toast" class="toast">Error processing image</div>
@@ -47,6 +432,8 @@
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const previewContainer = document.getElementById('preview-container');
+    const uploadContainer = document.getElementById('upload-container');
+    const addMoreBtn = document.getElementById('add-more-btn');
     const toast = document.getElementById('toast');
     const submitBtn = document.getElementById('submit-btn');
     const fnameInput = document.getElementById('fname');
@@ -57,7 +444,6 @@
     let detectionInProgress = false;
     let nextItemId = 0;
 
-    // Drag and Drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, preventDefaults, false);
     });
@@ -93,6 +479,7 @@
 
     fileInput.addEventListener('change', function() {
         handleFiles(this.files);
+        this.value = '';
     });
 
     function handleFiles(files) {
@@ -105,7 +492,10 @@
         }
 
         const newItems = [];
-        previewContainer.style.display = 'grid';
+
+        // Hide empty state and show add more button
+        uploadContainer.classList.add('has-images');
+        addMoreBtn.style.display = 'block';
 
         fileArray.forEach((file, index) => {
             const itemId = nextItemId++;
@@ -117,16 +507,18 @@
             card.className = 'image-card';
             card.dataset.itemId = itemId.toString();
 
-            const originalTitle = document.createElement('h3');
-            originalTitle.textContent = `Original Image (${file.name})`;
+            const title = document.createElement('h4');
+            title.textContent = file.name;
+
+            const imageGrid = document.createElement('div');
+            imageGrid.className = 'image-grid';
+
             const originalWrapper = document.createElement('div');
             originalWrapper.className = 'img-wrapper';
             const originalImg = document.createElement('img');
             originalImg.alt = 'Original';
             originalWrapper.appendChild(originalImg);
 
-            const resultTitle = document.createElement('h3');
-            resultTitle.textContent = 'Detection Result';
             const resultWrapper = document.createElement('div');
             resultWrapper.className = 'img-wrapper';
             const loader = document.createElement('div');
@@ -138,15 +530,15 @@
             resultWrapper.appendChild(loader);
             resultWrapper.appendChild(resultImg);
 
+            imageGrid.appendChild(originalWrapper);
+            imageGrid.appendChild(resultWrapper);
+
             const actions = document.createElement('div');
-            actions.style.display = 'flex';
-            actions.style.gap = '0.75rem';
-            actions.style.flexWrap = 'wrap';
-            actions.style.marginTop = '0.5rem';
+            actions.className = 'image-actions';
 
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.className = 'btn';
+            removeBtn.className = 'btn btn-small btn-remove';
             removeBtn.textContent = 'Remove';
             removeBtn.addEventListener('click', function() {
                 removeItem(itemId);
@@ -154,10 +546,8 @@
 
             actions.appendChild(removeBtn);
 
-            card.appendChild(originalTitle);
-            card.appendChild(originalWrapper);
-            card.appendChild(resultTitle);
-            card.appendChild(resultWrapper);
+            card.appendChild(title);
+            card.appendChild(imageGrid);
             card.appendChild(actions);
             previewContainer.appendChild(card);
 
@@ -196,8 +586,12 @@
         const formData = new FormData();
         items.forEach(item => formData.append('images', item.file));
 
-        previewContainer.querySelectorAll('.loader').forEach(loader => {
-            loader.style.display = 'block';
+        items.forEach(item => {
+            const card = previewContainer.querySelector(`[data-item-id="${item.id}"]`);
+            if (card) {
+                const loader = card.querySelector('.loader');
+                if (loader) loader.style.display = 'block';
+            }
         });
 
         detectionInProgress = true;
@@ -230,8 +624,12 @@
         .catch(error => {
             console.error('Error:', error);
             showToast("Failed to process images.");
-            previewContainer.querySelectorAll('.loader').forEach(loader => {
-                loader.style.display = 'none';
+            items.forEach(item => {
+                const card = previewContainer.querySelector(`[data-item-id="${item.id}"]`);
+                if (card) {
+                    const loader = card.querySelector('.loader');
+                    if (loader) loader.style.display = 'none';
+                }
             });
         })
         .finally(() => {
@@ -264,8 +662,7 @@
 
                 const linkWrapper = document.createElement('div');
                 linkWrapper.style.display = 'flex';
-                linkWrapper.style.gap = '0.75rem';
-                linkWrapper.style.flexWrap = 'wrap';
+                linkWrapper.style.gap = '0.5rem';
                 linkWrapper.style.marginTop = '0.5rem';
 
                 const orgLink = document.createElement('a');
@@ -301,16 +698,18 @@
         phoneInput.value = '';
         birthInput.value = '';
         previewContainer.innerHTML = '';
-        previewContainer.style.display = 'none';
+        uploadContainer.classList.remove('has-images');
+        addMoreBtn.style.display = 'none';
     }
 
     function removeItem(itemId) {
         selectedItems = selectedItems.filter(item => item.id !== itemId);
         const card = previewContainer.querySelector(`[data-item-id="${itemId}"]`);
         if (card) card.remove();
+        
         if (selectedItems.length === 0) {
-            previewContainer.innerHTML = '';
-            previewContainer.style.display = 'none';
+            uploadContainer.classList.remove('has-images');
+            addMoreBtn.style.display = 'none';
         }
     }
 
