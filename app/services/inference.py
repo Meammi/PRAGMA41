@@ -168,6 +168,72 @@ def scale_boxes(
     return scaled
 
 
+def _coerce_hex_color(color: str) -> str:
+    if isinstance(color, str) and color.startswith("#") and len(color) == 7:
+        return color
+    return "#000000"
+
+
+def _contrast_text_color(bg_hex: str) -> str:
+    # Simple luminance check; default to white text for dark-ish fills.
+    bg_hex = _coerce_hex_color(bg_hex)
+    r = int(bg_hex[1:3], 16)
+    g = int(bg_hex[3:5], 16)
+    b = int(bg_hex[5:7], 16)
+    luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    return "#000000" if luminance > 180 else "#FFFFFF"
+
+
+def _measure_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> Tuple[int, int]:
+    # Prefer textbbox (more accurate); fall back to older APIs.
+    if hasattr(draw, "textbbox"):
+        left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+        return int(right - left), int(bottom - top)
+    if hasattr(draw, "textsize"):
+        w, h = draw.textsize(text, font=font)
+        return int(w), int(h)
+    try:
+        w, h = font.getsize(text)  # type: ignore[attr-defined]
+        return int(w), int(h)
+    except Exception:
+        return (len(text) * 6, 11)
+
+
+def _draw_label(
+    draw: ImageDraw.ImageDraw,
+    *,
+    x: float,
+    y: float,
+    text: str,
+    bg_color: str,
+    font: ImageFont.ImageFont,
+    padding: int = 3,
+    radius: int = 4,
+) -> None:
+    bg_color = _coerce_hex_color(bg_color)
+    text_color = _contrast_text_color(bg_color)
+
+    tw, th = _measure_text(draw, text, font)
+    left = int(round(x))
+    top = int(round(y))
+    right = left + tw + padding * 2
+    bottom = top + th + padding * 2
+
+    # Background (rounded if available)
+    if hasattr(draw, "rounded_rectangle"):
+        draw.rounded_rectangle([left, top, right, bottom], radius=radius, fill=bg_color)
+    else:
+        draw.rectangle([left, top, right, bottom], fill=bg_color)
+
+    # Text with subtle outline for extra contrast on busy backgrounds
+    tx = left + padding
+    ty = top + padding
+    outline = "#000000" if text_color == "#FFFFFF" else "#FFFFFF"
+    for ox, oy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        draw.text((tx + ox, ty + oy), text, fill=outline, font=font)
+    draw.text((tx, ty), text, fill=text_color, font=font)
+
+
 def draw_boxes(image: Image.Image, boxes: List[BoundingBox]) -> bytes:
     draw = ImageDraw.Draw(image)
     try:
@@ -180,8 +246,12 @@ def draw_boxes(image: Image.Image, boxes: List[BoundingBox]) -> bytes:
         draw.rectangle([box.x1, box.y1, box.x2, box.y2], outline=color, width=3)
         label = f"{box.label} {(box.confidence * 100.0):.1f}%"
         if font:
-            text_origin = (box.x1 + 4, max(0, box.y1 - 12))
-            draw.text(text_origin, label, fill="white", font=font)
+            # Place label above box if possible; otherwise place inside box.
+            tw, th = _measure_text(draw, label, font)
+            y_above = int(round(box.y1)) - (th + 8)
+            y = y_above if y_above >= 0 else int(round(box.y1)) + 4
+            x = int(round(box.x1)) + 4
+            _draw_label(draw, x=x, y=y, text=label, bg_color=color, font=font)
 
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG", quality=90)
