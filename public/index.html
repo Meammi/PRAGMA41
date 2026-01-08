@@ -238,26 +238,11 @@
     <div class="upload-section" id="drop-zone" onclick="document.getElementById('file-input').click()">
         <div class="icon-upload">☁️</div>
         <div class="upload-text">Click to upload or drag and drop</div>
-        <div class="upload-subtext">JPG, PNG up to 10MB</div>
-        <input type="file" id="file-input" accept="image/jpeg, image/png">
+        <div class="upload-subtext">JPG, PNG up to 10MB (multiple allowed)</div>
+        <input type="file" id="file-input" accept="image/jpeg, image/png" multiple>
     </div>
 
-    <div class="preview-container" id="preview-container">
-        <div class="image-card">
-            <h3>Original Image</h3>
-            <div class="img-wrapper">
-                <img id="original-image" src="" alt="Original">
-            </div>
-        </div>
-
-        <div class="image-card">
-            <h3>Detection Result</h3>
-            <div class="img-wrapper">
-                <div class="loader" id="loader" style="display: none;"></div>
-                <img id="result-image" src="" alt="Result" style="display: none;">
-            </div>
-        </div>
-    </div>
+    <div class="preview-container" id="preview-container"></div>
 </main>
 
 <div id="toast" class="toast">Error processing image</div>
@@ -266,9 +251,6 @@
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const previewContainer = document.getElementById('preview-container');
-    const originalImage = document.getElementById('original-image');
-    const resultImage = document.getElementById('result-image');
-    const loader = document.getElementById('loader');
     const toast = document.getElementById('toast');
 
     // Drag and Drop events
@@ -310,31 +292,61 @@
     });
 
     function handleFiles(files) {
-        if (files.length > 0) {
-            const file = files[0];
-            if (!file.type.startsWith('image/')) {
-                showToast("Please select an image file.");
-                return;
-            }
-            
-            // Show preview
+        if (!files || files.length === 0) return;
+
+        const fileArray = Array.from(files).filter(file => file.type.startsWith('image/'));
+        if (fileArray.length === 0) {
+            showToast("Please select image files.");
+            return;
+        }
+
+        previewContainer.innerHTML = '';
+        previewContainer.style.display = 'grid';
+
+        fileArray.forEach((file, index) => {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            card.dataset.index = index.toString();
+
+            const originalTitle = document.createElement('h3');
+            originalTitle.textContent = `Original Image (${file.name})`;
+            const originalWrapper = document.createElement('div');
+            originalWrapper.className = 'img-wrapper';
+            const originalImg = document.createElement('img');
+            originalImg.alt = 'Original';
+            originalWrapper.appendChild(originalImg);
+
+            const resultTitle = document.createElement('h3');
+            resultTitle.textContent = 'Detection Result';
+            const resultWrapper = document.createElement('div');
+            resultWrapper.className = 'img-wrapper';
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            const resultImg = document.createElement('img');
+            resultImg.alt = 'Result';
+            resultImg.style.display = 'none';
+            resultWrapper.appendChild(loader);
+            resultWrapper.appendChild(resultImg);
+
+            card.appendChild(originalTitle);
+            card.appendChild(originalWrapper);
+            card.appendChild(resultTitle);
+            card.appendChild(resultWrapper);
+            previewContainer.appendChild(card);
+
             const reader = new FileReader();
             reader.onload = function(e) {
-                originalImage.src = e.target.result;
-                previewContainer.style.display = 'grid';
-                resultImage.style.display = 'none';
-                uploadAndDetect(file);
-            }
+                originalImg.src = e.target.result;
+            };
             reader.readAsDataURL(file);
-        }
+        });
+
+        uploadAndDetect(fileArray);
     }
 
-    function uploadAndDetect(file) {
-        // Show loader
-        loader.style.display = 'block';
-        
+    function uploadAndDetect(files) {
         const formData = new FormData();
-        formData.append('image', file);
+        files.forEach(file => formData.append('images', file));
 
         fetch('/detect', {
             method: 'POST',
@@ -342,19 +354,28 @@
         })
         .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
-            return response.blob();
+            return response.json();
         })
-        .then(blob => {
-            const imageUrl = URL.createObjectURL(blob);
-            resultImage.src = imageUrl;
-            resultImage.style.display = 'block';
+        .then(data => {
+            if (!data.results) throw new Error('Invalid response');
+            data.results.forEach(result => {
+                const card = previewContainer.querySelector(`[data-index="${result.index}"]`);
+                if (!card) return;
+                const resultImg = card.querySelector('img[alt="Result"]');
+                const loader = card.querySelector('.loader');
+                if (resultImg) {
+                    resultImg.src = result.result_image;
+                    resultImg.style.display = 'block';
+                }
+                if (loader) loader.style.display = 'none';
+            });
         })
         .catch(error => {
             console.error('Error:', error);
-            showToast("Failed to process image.");
-        })
-        .finally(() => {
-            loader.style.display = 'none';
+            showToast("Failed to process images.");
+            previewContainer.querySelectorAll('.loader').forEach(loader => {
+                loader.style.display = 'none';
+            });
         });
     }
 

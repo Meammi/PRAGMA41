@@ -1,3 +1,4 @@
+import base64
 import io
 from pathlib import Path
 from typing import List
@@ -5,7 +6,7 @@ from typing import List
 import numpy as np
 import onnxruntime as ort
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, ImageDraw, ImageFont
 
@@ -113,17 +114,29 @@ def draw_boxes(image: Image.Image, boxes: List[BoundingBox]) -> bytes:
 
 
 @app.post("/detect")
-async def detect(image: UploadFile = File(...)) -> StreamingResponse:
-    contents = await image.read()
-    pil_image = Image.open(io.BytesIO(contents))
-    original_width, original_height = pil_image.size
+async def detect(images: List[UploadFile] = File(...)) -> JSONResponse:
+    results = []
 
-    input_tensor = prepare_input(pil_image)
-    outputs = session.run([output_name], {input_name: input_tensor})
-    boxes = process_output(outputs[0], original_width, original_height)
+    for index, image in enumerate(images):
+        contents = await image.read()
+        pil_image = Image.open(io.BytesIO(contents))
+        original_width, original_height = pil_image.size
 
-    result_bytes = draw_boxes(pil_image.convert("RGB"), boxes)
-    return StreamingResponse(io.BytesIO(result_bytes), media_type="image/jpeg")
+        input_tensor = prepare_input(pil_image)
+        outputs = session.run([output_name], {input_name: input_tensor})
+        boxes = process_output(outputs[0], original_width, original_height)
+
+        result_bytes = draw_boxes(pil_image.convert("RGB"), boxes)
+        encoded = base64.b64encode(result_bytes).decode("ascii")
+        results.append(
+            {
+                "index": index,
+                "filename": image.filename or f"image-{index}",
+                "result_image": f"data:image/jpeg;base64,{encoded}",
+            }
+        )
+
+    return JSONResponse({"results": results})
 
 
 app.mount("/", StaticFiles(directory=PUBLIC_DIR, html=True), name="static")
