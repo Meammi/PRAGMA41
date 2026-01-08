@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Patients</h1>
+    <nav class="header-nav">
+        <a href="/">Upload</a>
+        <a class="active" href="/patients.html">Patients</a>
+    </nav>
+</header>
+
+<main>
+    <div class="table-card">
+        <h2>Patient Information</h2>
+        <p class="table-subtitle">Click a row to view results.</p>
+        <div class="table-wrapper">
+            <table class="patient-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone number</th>
+                        <th>Birthday</th>
+                    </tr>
+                </thead>
+                <tbody id="patient-body"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div id="toast" class="toast">Failed to load patients</div>
+
+<script>
+    const body = document.getElementById('patient-body');
+    const toast = document.getElementById('toast');
+
+    function showToast(message) {
+        toast.textContent = message;
+        toast.className = "toast show";
+        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
+    function formatDate(value) {
+        if (!value) return '-';
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) return value;
+        return parsed.toLocaleDateString();
+    }
+
+    function renderResults(results) {
+        if (!results || results.length === 0) {
+            return '<div class="empty-results">No results yet.</div>';
+        }
+
+        return results.map((result, index) => {
+            const createdAt = formatDate(result.created_at);
+            return `
+                <div class="result-row">
+                    <div>
+                        <div class="result-title">Result ${index + 1}</div>
+                        <div class="result-meta">${createdAt} · ${result.image_count} images</div>
+                    </div>
+                    <a class="btn btn-link" href="/api/results/${result.result_id}/zip">Download zip</a>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function addPatientRow(patient) {
+        const row = document.createElement('tr');
+        row.className = 'patient-row';
+        row.innerHTML = `
+            <td>${patient.name}</td>
+            <td>${patient.phone_number}</td>
+            <td>${formatDate(patient.birth_day)}</td>
+        `;
+
+        const detailRow = document.createElement('tr');
+        detailRow.className = 'detail-row hidden';
+        detailRow.innerHTML = `
+            <td colspan="3">
+                <div class="detail-content">
+                    ${renderResults(patient.results)}
+                </div>
+            </td>
+        `;
+
+        row.addEventListener('click', () => {
+            detailRow.classList.toggle('hidden');
+        });
+
+        body.appendChild(row);
+        body.appendChild(detailRow);
+    }
+
+    fetch('/api/patients')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load patients');
+            return response.json();
+        })
+        .then(data => {
+            if (!data.patients) throw new Error('Invalid response');
+            body.innerHTML = '';
+            if (data.patients.length === 0) {
+                body.innerHTML = '<tr><td colspan="3" class="empty-results">No patients yet.</td></tr>';
+                return;
+            }
+            data.patients.forEach(addPatientRow);
+        })
+        .catch(error => {
+            console.error(error);
+            showToast('Failed to load patients');
+        });
+</script>
+
+</body>
+</html>

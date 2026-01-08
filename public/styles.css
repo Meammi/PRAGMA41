@@ -188,9 +188,129 @@
             font-size: 0.9rem;
         }
 
-        .image-card a:hover {
-            text-decoration: underline;
-        }
+    .image-card a:hover {
+        text-decoration: underline;
+    }
+
+    .header-nav {
+        margin-top: 0.75rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .header-nav a {
+        color: var(--secondary-text);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .header-nav a.active,
+    .header-nav a:hover {
+        color: var(--text-color);
+    }
+
+    .table-card {
+        width: 100%;
+        max-width: 1000px;
+        background: var(--surface-color);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .table-card h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.25rem;
+    }
+
+    .table-subtitle {
+        margin: 0 0 1.5rem;
+        color: var(--secondary-text);
+        font-size: 0.95rem;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .patient-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+    }
+
+    .patient-table thead th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--secondary-text);
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .patient-table tbody td {
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .patient-row {
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .patient-row:hover {
+        background: rgba(148, 163, 184, 0.08);
+    }
+
+    .detail-row.hidden {
+        display: none;
+    }
+
+    .detail-content {
+        display: grid;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.7);
+        border-radius: 0.75rem;
+    }
+
+    .result-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        background: rgba(15, 23, 42, 0.6);
+    }
+
+    .result-title {
+        font-weight: 600;
+    }
+
+    .result-meta {
+        color: var(--secondary-text);
+        font-size: 0.9rem;
+    }
+
+    .btn.btn-link {
+        padding: 0.5rem 1.25rem;
+        font-size: 0.9rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: #93c5fd;
+    }
+
+    .btn.btn-link:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+
+    .empty-results {
+        color: var(--secondary-text);
+        padding: 1rem;
+    }
 
         .loader {
             width: 48px;
