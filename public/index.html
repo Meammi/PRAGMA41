@@ -7,382 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --surface-color: #1e293b;
-            --primary-color: #3b82f6;
-            --text-color: #f8fafc;
-            --secondary-text: #94a3b8;
-            --border-color: #334155;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            width: 100%;
-            padding: 1.5rem 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            position: fixed;
-            top: 0;
-            z-index: 10;
-        }
-        
-        header > * {
-            margin: 0 4rem;
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        @media (max-width: 768px) {
-            header > * {
-                margin: 0 2rem;
-            }
-        }
-
-        header h1 {
-            margin: 0.25;
-            font-weight: 600;
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header-nav {
-            margin: 1;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .header-nav a {
-            color: var(--secondary-text);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .header-nav a.active,
-        .header-nav a:hover {
-            color: var(--text-color);
-        }
-
-        main {
-            margin-top: 80px;
-            width: 90%;
-            max-width: 1400px;
-            padding: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .content-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
-
-        @media (max-width: 968px) {
-            .content-wrapper {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .upload-container {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .preview-section {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            max-height: 600px;
-        }
-        
-        .preview-section::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .preview-section::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.4);
-            border-radius: 4px;
-        }
-        
-        .preview-section::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-        
-        .preview-section::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-text);
-        }
-
-        .upload-section {
-            border: 2px dashed var(--border-color);
-            border-radius: 1rem;
-            padding: 3rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            background: rgba(15, 23, 42, 0.4);
-        }
-
-        .upload-section:hover {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .upload-section.dragging {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
-            transform: scale(1.02);
-        }
-
-        .icon-upload {
-            font-size: 3rem;
-            color: var(--secondary-text);
-            margin-bottom: 1rem;
-        }
-
-        .upload-text {
-            color: var(--text-color);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-subtext {
-            color: var(--secondary-text);
-            font-size: 0.875rem;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .patient-section {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 2rem;
-        }
-
-        .section-title {
-            margin: 0 0 1.5rem 0;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .text-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
-            background: #0b1220;
-            color: var(--text-color);
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-
-        .text-input::placeholder {
-            color: var(--secondary-text);
-        }
-
-        .input-grid {
-            display: grid;
-            gap: 0.75rem;
-        }
-
-        .btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .btn:hover {
-            background: #2563eb;
-        }
-
-        .btn:disabled {
-            background: var(--border-color);
-            cursor: not-allowed;
-        }
-
-        .preview-grid {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .add-more-btn {
-            width: 100%;
-            margin-top: 1rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: #93c5fd;
-            border: 1px solid var(--primary-color);
-        }
-
-        .add-more-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-        }
-
-        .image-card {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .image-card h4 {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.9rem;
-            color: var(--secondary-text);
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .img-wrapper {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .img-wrapper img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .loader {
-            width: 36px;
-            height: 36px;
-            border: 4px solid #FFF;
-            border-bottom-color: var(--primary-color);
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-            position: absolute;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .image-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-remove {
-            background: rgba(239, 68, 68, 0.1);
-            color: #fca5a5;
-        }
-
-        .btn-remove:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        .image-card a {
-            color: #93c5fd;
-            text-decoration: none;
-            font-size: 0.875rem;
-        }
-
-        .image-card a:hover {
-            text-decoration: underline;
-        }
-
-        .toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 4px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 17px;
-        }
-
-        .toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
-        }
-
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
-        }
-
-        .empty-state {
-            display: block;
-        }
-
-        .has-images .empty-state {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css?v=2">
 </head>
 <body>
 
@@ -507,17 +132,44 @@
             card.className = 'image-card';
             card.dataset.itemId = itemId.toString();
 
+            const titleWrap = document.createElement('div');
+            titleWrap.className = 'card-header';
+
+            const nameLabel = document.createElement('span');
+            nameLabel.className = 'chip';
+            nameLabel.textContent = 'Filename';
+
             const title = document.createElement('h4');
-            title.textContent = file.name;
+            title.textContent = formatFilename(file.name);
+            title.title = file.name;
+
+            titleWrap.appendChild(nameLabel);
+            titleWrap.appendChild(title);
 
             const imageGrid = document.createElement('div');
             imageGrid.className = 'image-grid';
+
+            const originalBlock = document.createElement('div');
+            originalBlock.className = 'image-block';
+            const originalLabel = document.createElement('span');
+            originalLabel.className = 'image-label';
+            originalLabel.textContent = 'Original';
 
             const originalWrapper = document.createElement('div');
             originalWrapper.className = 'img-wrapper';
             const originalImg = document.createElement('img');
             originalImg.alt = 'Original';
+            originalImg.className = 'zoomable-image';
             originalWrapper.appendChild(originalImg);
+
+            originalBlock.appendChild(originalLabel);
+            originalBlock.appendChild(originalWrapper);
+
+            const resultBlock = document.createElement('div');
+            resultBlock.className = 'image-block';
+            const resultLabel = document.createElement('span');
+            resultLabel.className = 'image-label';
+            resultLabel.textContent = 'Result';
 
             const resultWrapper = document.createElement('div');
             resultWrapper.className = 'img-wrapper';
@@ -527,11 +179,15 @@
             const resultImg = document.createElement('img');
             resultImg.alt = 'Result';
             resultImg.style.display = 'none';
+            resultImg.className = 'zoomable-image';
             resultWrapper.appendChild(loader);
             resultWrapper.appendChild(resultImg);
 
-            imageGrid.appendChild(originalWrapper);
-            imageGrid.appendChild(resultWrapper);
+            resultBlock.appendChild(resultLabel);
+            resultBlock.appendChild(resultWrapper);
+
+            imageGrid.appendChild(originalBlock);
+            imageGrid.appendChild(resultBlock);
 
             const actions = document.createElement('div');
             actions.className = 'image-actions';
@@ -546,7 +202,7 @@
 
             actions.appendChild(removeBtn);
 
-            card.appendChild(title);
+            card.appendChild(titleWrap);
             card.appendChild(imageGrid);
             card.appendChild(actions);
             previewContainer.appendChild(card);
@@ -559,6 +215,63 @@
         });
 
         runDetection(newItems);
+    }
+
+    document.addEventListener('click', function(event) {
+        const target = event.target;
+        if (!(target instanceof HTMLImageElement)) return;
+        if (!target.classList.contains('zoomable-image')) return;
+        if (!target.src) return;
+        openLightbox(target.src);
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const lightbox = document.querySelector('.lightbox');
+            if (lightbox) lightbox.remove();
+            document.body.classList.remove('modal-open');
+        }
+    });
+
+    function openLightbox(src) {
+        const existing = document.querySelector('.lightbox');
+        if (existing) existing.remove();
+
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        lightbox.style.position = 'fixed';
+        lightbox.style.inset = '0';
+        lightbox.style.display = 'flex';
+        lightbox.style.alignItems = 'center';
+        lightbox.style.justifyContent = 'center';
+        lightbox.style.zIndex = '9999';
+        lightbox.style.background = 'rgba(5, 10, 20, 0.75)';
+        lightbox.style.backdropFilter = 'blur(8px)';
+        lightbox.style.cursor = 'zoom-out';
+
+        const image = document.createElement('img');
+        image.src = src;
+        image.alt = 'Preview image';
+        image.style.maxWidth = '90vw';
+        image.style.maxHeight = '80vh';
+        image.style.objectFit = 'contain';
+        image.style.borderRadius = '0.75rem';
+        image.style.background = '#000';
+        image.style.display = 'block';
+
+        lightbox.appendChild(image);
+        lightbox.addEventListener('click', () => {
+            lightbox.remove();
+            document.body.classList.remove('modal-open');
+        });
+        document.body.appendChild(lightbox);
+        document.body.classList.add('modal-open');
+    }
+
+    function formatFilename(name) {
+        const maxChars = 14;
+        if (name.length <= maxChars) return name;
+        return `${name.slice(0, 12)}...`;
     }
 
     submitBtn.addEventListener('click', function() {

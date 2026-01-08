@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 INPUT_SIZE = 640
 CONFIDENCE_THRESHOLD = 0.5
 IOU_THRESHOLD = 0.7
-CLASSES = ["cell"]
+CLASSES = ["normal", "abnormal"]
 
 MODEL_PATH = str(Path(__file__).resolve().parent.parent.parent / "model.onnx")
 
@@ -56,12 +56,22 @@ def process_output(output: np.ndarray, original_width: int, original_height: int
     if squeezed.shape == (8400, 5):
         squeezed = squeezed.T
 
-    if squeezed.shape != (5, 8400):
+    if squeezed.ndim != 2 or squeezed.shape[1] != 8400:
+        raise ValueError(f"Unexpected output shape: {squeezed.shape}")
+
+    channels = squeezed.shape[0]
+    if channels < 5:
         raise ValueError(f"Unexpected output shape: {squeezed.shape}")
 
     boxes: List[BoundingBox] = []
     for idx in range(8400):
-        confidence = float(squeezed[4, idx])
+        class_id = 0
+        if channels == 5:
+            confidence = float(squeezed[4, idx])
+        else:
+            class_scores = squeezed[4:, idx]
+            class_id = int(np.argmax(class_scores))
+            confidence = float(class_scores[class_id])
         if confidence < CONFIDENCE_THRESHOLD:
             continue
 
@@ -75,7 +85,8 @@ def process_output(output: np.ndarray, original_width: int, original_height: int
         x2 = (xc + w / 2) / INPUT_SIZE * original_width
         y2 = (yc + h / 2) / INPUT_SIZE * original_height
 
-        boxes.append(BoundingBox(x1, y1, x2, y2, confidence, CLASSES[0]))
+        label = CLASSES[class_id] if class_id < len(CLASSES) else f"class-{class_id}"
+        boxes.append(BoundingBox(x1, y1, x2, y2, confidence, label))
 
     boxes.sort(key=lambda b: b.confidence)
     merged: List[BoundingBox] = []
@@ -96,11 +107,12 @@ def draw_boxes(image: Image.Image, boxes: List[BoundingBox]) -> bytes:
         font = None
 
     for box in boxes:
-        draw.rectangle([box.x1, box.y1, box.x2, box.y2], outline="red", width=2)
+        color = "green" if box.label == "normal" else "red"
+        draw.rectangle([box.x1, box.y1, box.x2, box.y2], outline=color, width=2)
         label = f"{box.label} ({box.confidence:.2f})"
         if font:
             text_origin = (box.x1 + 4, max(0, box.y1 - 12))
-            draw.text(text_origin, label, fill="blue", font=font)
+            draw.text(text_origin, label, fill=color, font=font)
 
     buffer = io.BytesIO()
     image.save(buffer, format="JPEG", quality=90)

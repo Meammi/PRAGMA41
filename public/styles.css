@@ -7,6 +7,10 @@
             --border-color: #334155;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
@@ -43,14 +47,13 @@ header h1 {
     -webkit-text-fill-color: transparent;
 }
         main {
-            margin-top: 80px;
-            width: 90%;
-            max-width: 1200px;
-            padding: 2rem 0;
+            margin-top: 120px;
+            width: min(94%, 1400px);
+            padding: 2.5rem 0 2rem;
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            align-items: center;
+            align-items: stretch;
         }
 
         .upload-section {
@@ -309,9 +312,177 @@ header h1 {
         background: rgba(59, 130, 246, 0.2);
     }
 
+    .btn-remove {
+        background: #dc2626;
+    }
+
+    .btn-remove:hover {
+        background: #b91c1c;
+    }
+
     .empty-results {
         color: var(--secondary-text);
         padding: 1rem;
+    }
+
+    .zoomable-image {
+        cursor: zoom-in;
+    }
+
+    .lightbox {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(5, 10, 20, 0.75);
+        backdrop-filter: blur(8px);
+        cursor: zoom-out;
+    }
+
+    .lightbox img {
+        max-width: 90vw;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 0.75rem;
+        background: #000;
+        display: block;
+    }
+
+    body.modal-open {
+        overflow: hidden;
+    }
+
+    .content-wrapper {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .upload-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        min-width: 0;
+    }
+
+    .upload-container.has-images .empty-state {
+        display: none;
+    }
+
+    .upload-section {
+        width: 100%;
+        max-width: 100%;
+        padding: 2rem;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+
+    .preview-section {
+        width: 100%;
+    }
+
+    .preview-grid {
+        display: flex;
+        gap: 1.5rem;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        scroll-snap-type: x mandatory;
+    }
+
+    .preview-grid::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .preview-grid::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.35);
+        border-radius: 999px;
+    }
+
+    .preview-grid::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.4);
+        border-radius: 999px;
+    }
+
+    .image-card {
+        flex: 0 0 360px;
+        scroll-snap-align: start;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        letter-spacing: 0.02em;
+        background: rgba(59, 130, 246, 0.15);
+        color: #93c5fd;
+        text-transform: uppercase;
+    }
+
+    .image-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .image-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .image-label {
+        font-size: 0.85rem;
+        color: var(--secondary-text);
+    }
+
+    @media (max-width: 900px) {
+        .image-card {
+            flex-basis: 300px;
+        }
+    }
+
+    .add-more-btn {
+        align-self: flex-start;
+    }
+
+    .patient-section {
+        width: 100%;
+        background: var(--surface-color);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .input-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    @media (max-width: 1024px) {
+        .content-wrapper {
+            grid-template-columns: 1fr;
+        }
     }
 
         .loader {
