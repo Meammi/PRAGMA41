@@ -4,3 +4,7 @@ onnxruntime
 pillow
 numpy
 python-multipart
+sqlalchemy
+alembic
+psycopg2-binary
+python-dotenv

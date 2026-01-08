@@ -7,226 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --surface-color: #1e293b;
-            --primary-color: #3b82f6;
-            --text-color: #f8fafc;
-            --secondary-text: #94a3b8;
-            --border-color: #334155;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            width: 100%;
-            padding: 1.5rem 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-            position: fixed;
-            top: 0;
-            z-index: 10;
-        }
-
-        header h1 {
-            margin: 0;
-            font-weight: 600;
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        main {
-            margin-top: 80px;
-            width: 90%;
-            max-width: 1200px;
-            padding: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .upload-section {
-            width: 100%;
-            max-width: 600px;
-            background: var(--surface-color);
-            border: 2px dashed var(--border-color);
-            border-radius: 1rem;
-            padding: 3rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .upload-section:hover {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .upload-section.dragging {
-            border-color: var(--primary-color);
-            background: rgba(59, 130, 246, 0.1);
-            transform: scale(1.02);
-        }
-
-        .icon-upload {
-            font-size: 3rem;
-            color: var(--secondary-text);
-            margin-bottom: 1rem;
-        }
-
-        .upload-text {
-            color: var(--text-color);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-subtext {
-            color: var(--secondary-text);
-            font-size: 0.875rem;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .preview-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            width: 100%;
-            display: none; /* Hidden by default */
-        }
-
-        @media (min-width: 768px) {
-            .preview-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .image-card {
-            background: var(--surface-color);
-            border-radius: 1rem;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .image-card h3 {
-            margin: 0;
-            font-size: 1rem;
-            color: var(--secondary-text);
-            font-weight: 500;
-        }
-
-        .img-wrapper {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .img-wrapper img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 1rem;
-        }
-
-        .btn:hover {
-            background: #2563eb;
-        }
-
-        .btn:disabled {
-            background: var(--border-color);
-            cursor: not-allowed;
-        }
-
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: var(--primary-color);
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-            position: absolute;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Toast Notification */
-        .toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 4px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 17px;
-        }
-
-        .toast.show {
-            visibility: visible;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
-        }
-
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
-        }
-    </style>
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
@@ -235,6 +16,17 @@
 </header>
 
 <main>
+    <div class="upload-section">
+        <div class="upload-text">Patient information</div>
+        <div style="display: grid; gap: 0.75rem; margin-top: 1rem;">
+            <input class="text-input" type="text" id="fname" placeholder="First name">
+            <input class="text-input" type="text" id="lname" placeholder="Last name">
+            <input class="text-input" type="text" id="phone_number" placeholder="Phone number">
+            <input class="text-input" type="date" id="birth_day">
+        </div>
+        <button class="btn" id="submit-btn" type="button" style="margin-top: 1.5rem;">Submit</button>
+    </div>
+
     <div class="upload-section" id="drop-zone" onclick="document.getElementById('file-input').click()">
         <div class="icon-upload">☁️</div>
         <div class="upload-text">Click to upload or drag and drop</div>
@@ -252,6 +44,14 @@
     const fileInput = document.getElementById('file-input');
     const previewContainer = document.getElementById('preview-container');
     const toast = document.getElementById('toast');
+    const submitBtn = document.getElementById('submit-btn');
+    const fnameInput = document.getElementById('fname');
+    const lnameInput = document.getElementById('lname');
+    const phoneInput = document.getElementById('phone_number');
+    const birthInput = document.getElementById('birth_day');
+    let selectedFiles = [];
+    let resultImages = [];
+    let detectionInProgress = false;
 
     // Drag and Drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -300,13 +100,16 @@
             return;
         }
 
-        previewContainer.innerHTML = '';
+        const startIndex = selectedFiles.length;
+        selectedFiles = selectedFiles.concat(fileArray);
+        resultImages = resultImages.concat(new Array(fileArray.length).fill(null));
         previewContainer.style.display = 'grid';
 
         fileArray.forEach((file, index) => {
+            const globalIndex = startIndex + index;
             const card = document.createElement('div');
             card.className = 'image-card';
-            card.dataset.index = index.toString();
+            card.dataset.index = globalIndex.toString();
 
             const originalTitle = document.createElement('h3');
             originalTitle.textContent = `Original Image (${file.name})`;
@@ -322,6 +125,7 @@
             resultWrapper.className = 'img-wrapper';
             const loader = document.createElement('div');
             loader.className = 'loader';
+            loader.style.display = 'none';
             const resultImg = document.createElement('img');
             resultImg.alt = 'Result';
             resultImg.style.display = 'none';
@@ -341,12 +145,39 @@
             reader.readAsDataURL(file);
         });
 
-        uploadAndDetect(fileArray);
+        runDetection(fileArray, startIndex);
     }
 
-    function uploadAndDetect(files) {
+    submitBtn.addEventListener('click', function() {
+        if (selectedFiles.length === 0) {
+            showToast("Please upload images first.");
+            return;
+        }
+        if (!fnameInput.value || !lnameInput.value || !phoneInput.value || !birthInput.value) {
+            showToast("Please fill in all patient fields.");
+            return;
+        }
+        if (detectionInProgress) {
+            showToast("Detection is still running.");
+            return;
+        }
+        if (resultImages.some(image => !image)) {
+            showToast("Please wait for detection to finish.");
+            return;
+        }
+
+        submitCase(selectedFiles, resultImages);
+    });
+
+    function runDetection(files, offset) {
         const formData = new FormData();
         files.forEach(file => formData.append('images', file));
+
+        previewContainer.querySelectorAll('.loader').forEach(loader => {
+            loader.style.display = 'block';
+        });
+
+        detectionInProgress = true;
 
         fetch('/detect', {
             method: 'POST',
@@ -358,8 +189,9 @@
         })
         .then(data => {
             if (!data.results) throw new Error('Invalid response');
-            data.results.forEach(result => {
-                const card = previewContainer.querySelector(`[data-index="${result.index}"]`);
+            data.results.forEach((result) => {
+                const globalIndex = offset + result.index;
+                const card = previewContainer.querySelector(`[data-index="${globalIndex}"]`);
                 if (!card) return;
                 const resultImg = card.querySelector('img[alt="Result"]');
                 const loader = card.querySelector('.loader');
@@ -368,6 +200,7 @@
                     resultImg.style.display = 'block';
                 }
                 if (loader) loader.style.display = 'none';
+                resultImages[globalIndex] = result.result_image;
             });
         })
         .catch(error => {
@@ -376,7 +209,76 @@
             previewContainer.querySelectorAll('.loader').forEach(loader => {
                 loader.style.display = 'none';
             });
+        })
+        .finally(() => {
+            detectionInProgress = false;
         });
+    }
+
+    function submitCase(files, results) {
+        const formData = new FormData();
+        files.forEach(file => formData.append('images', file));
+        results.forEach(result => formData.append('result_images', result));
+        formData.append('fname', fnameInput.value);
+        formData.append('lname', lnameInput.value);
+        formData.append('phone_number', phoneInput.value);
+        formData.append('birth_day', birthInput.value);
+
+        fetch('/submit', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (!data.images) throw new Error('Invalid response');
+            data.images.forEach((result) => {
+                const card = previewContainer.querySelector(`[data-index="${result.index}"]`);
+                if (!card) return;
+
+                const linkWrapper = document.createElement('div');
+                linkWrapper.style.display = 'flex';
+                linkWrapper.style.gap = '0.75rem';
+                linkWrapper.style.flexWrap = 'wrap';
+                linkWrapper.style.marginTop = '0.5rem';
+
+                const orgLink = document.createElement('a');
+                orgLink.href = `/images/${result.image_id}/original`;
+                orgLink.textContent = 'Download original';
+                orgLink.target = '_blank';
+                orgLink.rel = 'noopener';
+
+                const resLink = document.createElement('a');
+                resLink.href = `/images/${result.image_id}/result`;
+                resLink.textContent = 'Download result';
+                resLink.target = '_blank';
+                resLink.rel = 'noopener';
+
+                linkWrapper.appendChild(orgLink);
+                linkWrapper.appendChild(resLink);
+                card.appendChild(linkWrapper);
+            });
+            showToast("Submitted successfully.");
+            resetForm();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast("Failed to submit case.");
+        });
+    }
+
+    function resetForm() {
+        selectedFiles = [];
+        resultImages = [];
+        fileInput.value = '';
+        fnameInput.value = '';
+        lnameInput.value = '';
+        phoneInput.value = '';
+        birthInput.value = '';
+        previewContainer.innerHTML = '';
+        previewContainer.style.display = 'none';
     }
 
     function showToast(message) {

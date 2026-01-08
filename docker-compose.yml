@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: pragma41-postgres
+    environment:
+      POSTGRES_DB: pragma41
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pragma41_pgdata:/var/lib/postgresql/data
+
+volumes:
+  pragma41_pgdata:
