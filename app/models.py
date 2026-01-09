@@ -1,5 +1,6 @@
 import uuid
 
+import sqlalchemy as sa
 from sqlalchemy import Column, DateTime, ForeignKey, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -25,6 +26,8 @@ class Result(Base):
     result_id = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     medical_report = Column(Text, nullable=False)
+    normal_count = Column(sa.Integer(), server_default="0", nullable=False)
+    abnormal_count = Column(sa.Integer(), server_default="0", nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 

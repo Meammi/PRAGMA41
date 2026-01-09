@@ -12,10 +12,10 @@
 <body>
 
 <header>
-    <h1>AI Object Detection</h1>
+    <h1>Cell Detection</h1>
     <nav class="header-nav">
-        <a class="active" href="/">Upload</a>
-        <a href="/patients.html">Patients</a>
+        <a class="active" href="/">Home</a>
+        <a href="/patients.html">Patients History</a>
     </nav>
 </header>
 
@@ -124,7 +124,7 @@
 
         fileArray.forEach((file, index) => {
             const itemId = nextItemId++;
-            const item = { id: itemId, file, resultImage: null };
+            const item = { id: itemId, file, resultImage: null, normalCount: 0, abnormalCount: 0 };
             newItems.push(item);
             selectedItems.push(item);
 
@@ -332,6 +332,8 @@
                 }
                 if (loader) loader.style.display = 'none';
                 item.resultImage = result.result_image;
+                item.normalCount = result.normal_count ?? 0;
+                item.abnormalCount = result.abnormal_count ?? 0;
             });
         })
         .catch(error => {
@@ -354,6 +356,10 @@
         const formData = new FormData();
         items.forEach(item => formData.append('images', item.file));
         items.forEach(item => formData.append('result_images', item.resultImage));
+        const totalNormal = items.reduce((sum, item) => sum + (item.normalCount || 0), 0);
+        const totalAbnormal = items.reduce((sum, item) => sum + (item.abnormalCount || 0), 0);
+        formData.append('normal_count', String(totalNormal));
+        formData.append('abnormal_count', String(totalAbnormal));
         formData.append('fname', fnameInput.value);
         formData.append('lname', lnameInput.value);
         formData.append('phone_number', phoneInput.value);

@@ -32,11 +32,23 @@ async def submit(
     lname: str = Form(...),
     phone_number: str = Form(...),
     birth_day: str = Form(...),
+    normal_count: int = Form(...),
+    abnormal_count: int = Form(...),
     images: List[UploadFile] = File(...),
     result_images: List[str] = Form(...),
     db: Session = Depends(get_db),
 ) -> JSONResponse:
-    data = submit_case(db, fname, lname, phone_number, birth_day, images, result_images)
+    data = submit_case(
+        db,
+        fname,
+        lname,
+        phone_number,
+        birth_day,
+        images,
+        result_images,
+        normal_count,
+        abnormal_count,
+    )
     return JSONResponse(data)
 
 
@@ -79,6 +91,8 @@ def list_patients(db: Session = Depends(get_db)) -> JSONResponse:
                         "result_id": str(result.result_id),
                         "created_at": result.created_at.isoformat() if result.created_at else None,
                         "image_count": len(result.images),
+                        "normal_count": result.normal_count,
+                        "abnormal_count": result.abnormal_count,
                     }
                     for result in results
                 ],

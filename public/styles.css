@@ -266,7 +266,25 @@ header h1 {
     }
 
     .patient-row:hover {
-        background: rgba(148, 163, 184, 0.08);
+        background: rgba(59, 130, 246, 0.12);
+    }
+
+    .patient-row td:first-child {
+        position: relative;
+    }
+
+    .patient-row td:first-child::after {
+        content: "›";
+        position: absolute;
+        right: 12px;
+        color: var(--secondary-text);
+        font-size: 1.1rem;
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .patient-row:hover td:first-child::after {
+        transform: translateX(4px);
+        color: var(--text-color);
     }
 
     .detail-row.hidden {

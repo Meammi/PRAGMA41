@@ -28,6 +28,8 @@ def submit_case(
     birth_day: str,
     images,
     result_images: List[str],
+    normal_count: int,
+    abnormal_count: int,
 ) -> dict:
     if not images:
         raise HTTPException(status_code=400, detail="No images uploaded")
@@ -35,7 +37,7 @@ def submit_case(
         raise HTTPException(status_code=400, detail="Result images do not match uploads")
 
     user = get_or_create_user(db, fname, lname, phone_number, parse_birth_day(birth_day))
-    result = create_result(db, user.user_id)
+    result = create_result(db, user.user_id, normal_count=normal_count, abnormal_count=abnormal_count)
 
     saved = []
     for index, image in enumerate(images):

@@ -12,10 +12,10 @@
 <body>
 
 <header>
-    <h1>Patients</h1>
+    <h1>Cell Detection</h1>
     <nav class="header-nav">
-        <a href="/">Upload</a>
-        <a class="active" href="/patients.html">Patients</a>
+        <a href="/">Home</a>
+        <a class="active" href="/patients.html">Patients History</a>
     </nav>
 </header>
 
@@ -68,7 +68,7 @@
                 <div class="result-row">
                     <div>
                         <div class="result-title">Result ${index + 1}</div>
-                        <div class="result-meta">${createdAt} · ${result.image_count} images</div>
+                        <div class="result-meta">${createdAt} · ${result.image_count} images · Normal ${result.normal_count} · Abnormal ${result.abnormal_count}</div>
                     </div>
                     <a class="btn btn-link" href="/api/results/${result.result_id}/zip">Download zip</a>
                 </div>

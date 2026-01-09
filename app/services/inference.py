@@ -266,6 +266,8 @@ def detect_bytes(images: List[dict]) -> List[dict]:
         dets_640 = decode_yolo_output(outputs[0], conf_threshold=CONFIDENCE_THRESHOLD)
         dets_nms = non_max_suppression(dets_640, iou_threshold=IOU_THRESHOLD)
         boxes = scale_boxes(dets_nms, scale, x_offset, y_offset, original_width, original_height)
+        abnormal_count = sum(1 for box in boxes if box.class_id == 1)
+        normal_count = sum(1 for box in boxes if box.class_id == 0)
 
         result_bytes = draw_boxes(pil_image.convert("RGB"), boxes)
         encoded = base64.b64encode(result_bytes).decode("ascii")
@@ -274,6 +276,8 @@ def detect_bytes(images: List[dict]) -> List[dict]:
                 "index": index,
                 "filename": filename or f"image-{index}",
                 "result_image": f"data:image/jpeg;base64,{encoded}",
+                "abnormal_count": abnormal_count,
+                "normal_count": normal_count,
             }
         )
     return results
